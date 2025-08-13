@@ -1,0 +1,92 @@
+services:
+  # Ollama service for local LLM inference
+  ollama:
+    image: ollama/ollama
+    container_name: ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    restart: unless-stopped
+    networks:
+      - soc-net
+
+  # PostgreSQL database for storing enriched alerts
+  postgres:
+    image: postgres:15
+    container_name: postgres
+    environment:
+      POSTGRES_DB: soc_copilot
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./db:/var/lib/postgresql/data
+    restart: unless-stopped
+    networks:
+      - soc-net
+
+  # Worker container that watches Wazuh alerts and processes them
+  soc-copilot-worker:
+    build:
+      context: ./worker
+    container_name: soc-copilot-worker
+    depends_on:
+      - postgres
+      - ollama
+    environment:
+      OLLAMA_URL: http://ollama:11434
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: soc_copilot
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - ./ai_inputs:/app/ai_inputs
+      - ./ai_pending:/app/ai_pending
+      - ./ai_outputs:/app/ai_outputs
+      - /var/ossec/logs/alerts/alerts.json:/var/ossec/logs/alerts/alerts.json:ro
+    restart: unless-stopped
+    networks:
+      - soc-net
+
+  # FastAPI backend for accessing enriched alerts
+  soc-copilot-api:
+    build:
+      context: ./api
+    container_name: soc-copilot-api
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: soc_copilot
+      DB_USER: postgres
+      DB_PASS: postgres
+    restart: unless-stopped
+    networks:
+      - soc-net
+
+  # React frontend (built and served by Nginx) — proxies /api -> soc-copilot-api:8000
+  soc-copilot-frontend:
+    build:
+      context: ./frontend
+      args:
+        VITE_API_BASE_URL: "/api"
+    container_name: soc-copilot-frontend
+    ports:
+      - "8080:80"
+    depends_on:
+      - soc-copilot-api
+    restart: unless-stopped
+    networks:
+      - soc-net
+
+volumes:
+  ollama_data:
+
+networks:
+  soc-net:

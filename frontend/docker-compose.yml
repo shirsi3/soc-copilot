@@ -1,0 +1,11 @@
+services:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:80"
+    environment:
+      # If your API is another compose service named 'api', switch to http://api:8000 before building
+      - VITE_API_BASE=http://localhost:8000
+    restart: unless-stopped

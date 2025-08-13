@@ -1,0 +1,30 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Subtle grid background + smooth scroll */
+:root { color-scheme: dark; }
+html, body, #root { height: 100%; }
+body {
+  @apply bg-bg text-neutral-200 font-ui antialiased;
+  background-image: radial-gradient(rgba(56, 189, 248, 0.06) 1px, transparent 1px),
+                    radial-gradient(rgba(0, 229, 255, 0.06) 1px, transparent 1px);
+  background-position: 0 0, 25px 25px;
+  background-size: 50px 50px;
+}
+.card { @apply bg-panel/80 border border-stroke rounded-2xl shadow-xl; }
+.btn {
+  @apply inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-stroke hover:border-accent transition;
+}
+.input {
+  @apply bg-panel/60 border border-stroke rounded-lg px-3 py-2 outline-none focus:border-accent w-full;
+}
+.badge { @apply rounded-md px-2 py-1 text-xs bg-stroke/60; }
+.tab {
+  @apply px-3 py-2 rounded-lg border border-transparent hover:border-stroke cursor-pointer;
+}
+.tab-active {
+  @apply border-accent text-accent;
+}
+.table th { @apply text-left text-sm font-semibold text-neutral-300 border-b border-stroke pb-2; }
+.table td { @apply align-top border-b border-stroke/70 py-3; }

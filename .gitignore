@@ -1,0 +1,25 @@
+# Python cache
+__pycache__/
+*.pyc
+
+# Node
+node_modules/
+dist/
+
+# Docker / Ollama runtime data
+db/
+ollama/
+docker-data/
+volumes/
+
+# Logs
+*.log
+*.pid
+
+# Env files
+.env
+.env.*
+
+# IDE
+.vscode/
+.idea/
