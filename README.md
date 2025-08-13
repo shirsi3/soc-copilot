@@ -1,6 +1,6 @@
 # SOC Co-Pilot
 
-SOC Co-Pilot is an AI-powered threat detection and response assistant designed to support Security Operations Center (SOC) analysts. This project integrates advanced log analysis, natural language processing, and MITRE ATT&CK-based enrichment to provide human-readable summaries and actionable recommendations for security alerts.
+SOC Co-Pilot is an AI-powered threat detection and response assistant designed to support Security Operations Center (SOC) analysts. This project integrates advanced log analysis, natural language processing, and AI enrichment to provide human-readable summaries and actionable recommendations for security alerts.
 
 Built using Wazuh, FastAPI, PostgreSQL, React, and Ollama (Phi-3), SOC Co-Pilot bridges the gap between raw security logs and analyst-ready insights. It enhances situational awareness, speeds up triage, and promotes more consistent and informed decision-making within the SOC.
 
@@ -56,56 +56,66 @@ After the installation completes, save the following:
 
 ---
 
-## How to Set Up SOC Co-Pilot (Docker-Based)
+## How to Set Up SOC Co-Pilot (Command by Command)
 
-You can create and run the following script on your **Ubuntu host machine** to install Docker, Ollama, and launch SOC Co-Pilot.
+### 1. Update the system
 
-### Save the following as `setup-soc-copilot.sh`:
-
-\`\`\`bash
-#!/bin/bash
-
-echo "[*] Updating system..."
+```bash
 sudo apt update && sudo apt upgrade -y
+```
 
-echo "[*] Installing Docker and Docker Compose..."
+### 2. Install Docker and Docker Compose
+
+```bash
 sudo apt install -y docker.io docker-compose
+```
 
-echo "[*] Enabling and starting Docker service..."
+### 3. Enable and start Docker
+
+```bash
 sudo systemctl enable docker
 sudo systemctl start docker
+```
 
-echo "[*] Installing Ollama..."
+### 4. Install Ollama
+
+```bash
 curl -fsSL https://ollama.com/install.sh | sh
+```
 
-echo "[*] Starting Ollama in background..."
+### 5. Start Ollama in the background
+
+```bash
 ollama serve &
+```
 
-echo "[*] Pulling Phi-3 Mini model..."
+### 6. Pull the Phi-3 Mini model
+
+```bash
 ollama pull phi3:mini
+```
 
-echo "[*] Cloning SOC Co-Pilot repository..."
+### 7. Clone the SOC Co-Pilot repository
+
+```bash
 git clone https://github.com/shirsi3/soc-copilot.git
 cd soc-copilot
+```
 
-echo "[*] Starting Docker containers..."
+### 8. Start Docker containers
+
+```bash
 docker compose up -d
+```
 
-echo "[*] Optional: Testing Ollama API..."
+### 9. (Optional) Test Ollama response
+
+```bash
 curl http://localhost:11434/api/generate -d '{
   "model": "phi3:mini",
   "prompt": "Explain zero trust in cybersecurity.",
   "stream": false
 }'
-
-echo "[*] Setup complete."
-\`\`\`
-
-### Make it executable and run it:
-
-```bash
-chmod +x setup-soc-copilot.sh
-./setup-soc-copilot.sh
 ```
 
 ---
@@ -140,8 +150,6 @@ Replace `soc-copilot-backend` with:
 
 ## Access Points
 
-After setup, you can access the system using the following URLs:
-
 | Component              | URL                              | Description                                       |
 |------------------------|-----------------------------------|---------------------------------------------------|
 | SOC Co-Pilot Dashboard | http://localhost:8080             | Web interface for viewing enriched alerts         |
@@ -170,5 +178,4 @@ After setup, you can access the system using the following URLs:
 
 - **`postgres`**  
   PostgreSQL database storing alerts, enrichment data, and system metadata.
-
 
